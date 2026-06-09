@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: mentora-postgres
+    environment:
+      POSTGRES_DB: mentora
+      POSTGRES_USER: user_information
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - mentora-postgres-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: mentora-api
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mentora
+      SPRING_DATASOURCE_USERNAME: user_information
+      SPRING_DATASOURCE_PASSWORD: 1234
+      MENTORA_SECURITY_TOKEN_SECRET: change-this-secret-in-production
+    ports:
+      - "8080:8080"
+
+volumes:
+  mentora-postgres-data:
