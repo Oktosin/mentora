@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -279,14 +278,14 @@ public class AuthServiceImpl implements AuthService {
 		
 	}
 
-	private DeviceSession trackDeviceSession(UserData userData, HttpServletRequest request) {
+	private DeviceSession trackDeviceSession(UserData userData, HttpServletRequest httpServletRequest) {
 		LocalDateTime presentDateTime = LocalDateTime.now();
 		DeviceSession deviceSession = new DeviceSession();
 		deviceSession.setTenantId(userData.getTenantId());
 		deviceSession.setUserData(userData);
-		deviceSession.setSessionId(request.getSession().getId());
-		deviceSession.setIpAddress(getClientIpAddress(request));
-		deviceSession.setDevice(request.getHeader("User-Agent"));
+		deviceSession.setSessionId(httpServletRequest.getSession().getId());
+		deviceSession.setIpAddress(getClientIpAddress(httpServletRequest));
+		deviceSession.setDevice(httpServletRequest.getHeader("User-Agent"));
 		deviceSession.setLastSeenAt(presentDateTime);
 		deviceSession.setExpiresAt(presentDateTime.plusSeconds(tokenService.getRefreshTokenTtlSeconds()));
 		deviceSession.setActive(true);
@@ -315,13 +314,13 @@ public class AuthServiceImpl implements AuthService {
 		refreshTokenRepository.saveAll(activeTokens);
 	}
 
-	private void revokeRefreshToken(UserLogoutRequest userLogoutRequest, HttpServletRequest request) {
+	private void revokeRefreshToken(UserLogoutRequest userLogoutRequest, HttpServletRequest httpServletRequest) {
 		if (userLogoutRequest != null && userLogoutRequest.getRefreshToken() != null && !userLogoutRequest.getRefreshToken().isBlank()) {
 			refreshTokenRepository.findByTokenHashAndActiveTrue(hashToken(userLogoutRequest.getRefreshToken())).ifPresent((refreshToken) -> {
 				refreshToken.setActive(false);
 				refreshToken.setRevokedAt(LocalDateTime.now());
 				refreshTokenRepository.save(refreshToken);
-				auditEventService.log(refreshToken.getTenantId(), refreshToken.getUserData().getId(), "REFRESH_TOKEN_REVOKED", request);
+				auditEventService.log(refreshToken.getTenantId(), refreshToken.getUserData().getId(), "REFRESH_TOKEN_REVOKED", httpServletRequest);
 			});
 			return;
 		}
@@ -330,7 +329,7 @@ public class AuthServiceImpl implements AuthService {
 			UserData userData = userDataDAO.findUserDataByEmail(authentication.getName());
 			if (userData != null) {
 				revokeActiveRefreshTokens(userData);
-				auditEventService.log(userData.getTenantId(), userData.getId(), "USER_LOGOUT", request);
+				auditEventService.log(userData.getTenantId(), userData.getId(), "USER_LOGOUT", httpServletRequest);
 			}
 		}
 	}
@@ -344,12 +343,12 @@ public class AuthServiceImpl implements AuthService {
 		}
 	}
 
-	private String getClientIpAddress(HttpServletRequest request) {
-		String forwardedFor = request.getHeader("X-Forwarded-For");
+	private String getClientIpAddress(HttpServletRequest httpServletRequest) {
+		String forwardedFor = httpServletRequest.getHeader("X-Forwarded-For");
 		if (forwardedFor != null && !forwardedFor.isBlank()) {
 			return forwardedFor.split(",")[0].trim();
 		}
-		return request.getRemoteAddr();
+		return httpServletRequest.getRemoteAddr();
 	}
 
 }

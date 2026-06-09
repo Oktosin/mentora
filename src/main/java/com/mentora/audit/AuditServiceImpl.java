@@ -17,7 +17,7 @@ public class AuditServiceImpl implements AuditService {
 	private final TenantContext tenantContext;
 
 	@Override
-	public List<ActivityLog> activity(HttpServletRequest request) {
-		return activityLogRepository.findByTenantId(tenantContext.requireTenantId(request));
+	public List<ActivityLog> activity(HttpServletRequest httpServletRequest) {
+		return activityLogRepository.findByTenantId(tenantContext.requireTenantId(httpServletRequest));
 	}
 }

@@ -27,21 +27,21 @@ public class LearningServiceImpl implements LearningService {
 	private final TenantContext tenantContext;
 
 	@Override
-	public Course createCourse(Course course, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public Course createCourse(Course course, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		course.setTenantId(tenantId);
 		course.setActive(true);
 		return courseRepository.save(course);
 	}
 
 	@Override
-	public List<Course> courses(HttpServletRequest request) {
-		return courseRepository.findByTenantId(tenantContext.requireTenantId(request));
+	public List<Course> courses(HttpServletRequest httpServletRequest) {
+		return courseRepository.findByTenantId(tenantContext.requireTenantId(httpServletRequest));
 	}
 
 	@Override
-	public CourseModule createModule(UUID courseId, CourseModule module, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public CourseModule createModule(UUID courseId, CourseModule module, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Course course = tenantCourse(tenantId, courseId);
 		module.setTenantId(tenantId);
 		module.setCourse(course);
@@ -49,13 +49,13 @@ public class LearningServiceImpl implements LearningService {
 	}
 
 	@Override
-	public List<CourseModule> modules(UUID courseId, HttpServletRequest request) {
-		return moduleRepository.findByTenantIdAndCourseId(tenantContext.requireTenantId(request), courseId);
+	public List<CourseModule> modules(UUID courseId, HttpServletRequest httpServletRequest) {
+		return moduleRepository.findByTenantIdAndCourseId(tenantContext.requireTenantId(httpServletRequest), courseId);
 	}
 
 	@Override
-	public Lesson createLesson(UUID moduleId, Lesson lesson, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public Lesson createLesson(UUID moduleId, Lesson lesson, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		CourseModule module = moduleRepository.findById(moduleId)
 				.filter(item -> item.getTenantId().equals(tenantId))
 				.orElseThrow(() -> new IllegalArgumentException("Module not found for tenant"));
@@ -65,13 +65,13 @@ public class LearningServiceImpl implements LearningService {
 	}
 
 	@Override
-	public List<Lesson> lessons(UUID moduleId, HttpServletRequest request) {
-		return lessonRepository.findByTenantIdAndModuleId(tenantContext.requireTenantId(request), moduleId);
+	public List<Lesson> lessons(UUID moduleId, HttpServletRequest httpServletRequest) {
+		return lessonRepository.findByTenantIdAndModuleId(tenantContext.requireTenantId(httpServletRequest), moduleId);
 	}
 
 	@Override
-	public Enrollment enroll(UUID courseId, UUID userId, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public Enrollment enroll(UUID courseId, UUID userId, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Course course = tenantCourse(tenantId, courseId);
 		UserData user = userDataDAO.findById(userId)
 				.filter(item -> item.getTenantId().equals(tenantId))
@@ -93,8 +93,8 @@ public class LearningServiceImpl implements LearningService {
 
 	@Override
 	@Transactional
-	public LessonProgress progress(UUID lessonId, UUID userId, ProgressRequest requestPayload, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public LessonProgress progress(UUID lessonId, UUID userId, ProgressRequest requestPayload, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Lesson lesson = lessonRepository.findById(lessonId)
 				.filter(item -> item.getTenantId().equals(tenantId))
 				.orElseThrow(() -> new IllegalArgumentException("Lesson not found for tenant"));

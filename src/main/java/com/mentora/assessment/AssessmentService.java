@@ -6,10 +6,10 @@ import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface AssessmentService {
-	Assessment create(Assessment assessment, HttpServletRequest request);
-	List<Assessment> list(HttpServletRequest request);
-	List<Question> questions(UUID assessmentId, HttpServletRequest request);
-	Question addQuestion(UUID assessmentId, Question question, HttpServletRequest request);
-	AnswerOption addAnswer(UUID questionId, AnswerOption answer, HttpServletRequest request);
-	AssessmentResult submit(UUID assessmentId, UUID userId, SubmissionRequest submission, HttpServletRequest request);
+	Assessment create(Assessment assessment, HttpServletRequest httpServletRequest);
+	List<Assessment> list(HttpServletRequest httpServletRequest);
+	List<Question> questions(UUID assessmentId, HttpServletRequest httpServletRequest);
+	Question addQuestion(UUID assessmentId, Question question, HttpServletRequest httpServletRequest);
+	AnswerOption addAnswer(UUID questionId, AnswerOption answer, HttpServletRequest httpServletRequest);
+	AssessmentResult submit(UUID assessmentId, UUID userId, SubmissionRequest submission, HttpServletRequest httpServletRequest);
 }

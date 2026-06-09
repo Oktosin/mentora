@@ -5,6 +5,6 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface OrganizationService {
-	Organization createOrganization(Organization organization, HttpServletRequest request);
-	List<Organization> organizations(HttpServletRequest request);
+	Organization createOrganization(Organization organization, HttpServletRequest httpServletRequest);
+	List<Organization> organizations(HttpServletRequest httpServletRequest);
 }

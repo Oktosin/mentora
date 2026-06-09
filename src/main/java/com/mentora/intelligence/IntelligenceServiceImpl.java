@@ -25,8 +25,8 @@ public class IntelligenceServiceImpl implements IntelligenceService {
 	private final AuditEventService auditEventService;
 
 	@Override
-	public AnonymousPost feedback(FeedbackRequest requestPayload, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public AnonymousPost feedback(FeedbackRequest requestPayload, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		AnonymousPost post = new AnonymousPost();
 		post.setTenantId(tenantId);
 		post.setChallenge(requestPayload.challenge());
@@ -36,7 +36,7 @@ public class IntelligenceServiceImpl implements IntelligenceService {
 
 		Recommendation recommendation = buildRecommendation(tenantId, post);
 		recommendationRepository.save(recommendation);
-		auditEventService.log(tenantId, null, "ANONYMOUS_FEEDBACK_SUBMITTED", request);
+		auditEventService.log(tenantId, null, "ANONYMOUS_FEEDBACK_SUBMITTED", httpServletRequest);
 		return post;
 	}
 
@@ -62,13 +62,13 @@ public class IntelligenceServiceImpl implements IntelligenceService {
 	}
 
 	@Override
-	public List<AnonymousPost> feedback(HttpServletRequest request) {
-		return anonymousPostRepository.findByTenantId(tenantContext.requireTenantId(request));
+	public List<AnonymousPost> feedback(HttpServletRequest httpServletRequest) {
+		return anonymousPostRepository.findByTenantId(tenantContext.requireTenantId(httpServletRequest));
 	}
 
 	@Override
-	public List<Recommendation> recommendations(HttpServletRequest request) {
-		return recommendationRepository.findByTenantId(tenantContext.requireTenantId(request));
+	public List<Recommendation> recommendations(HttpServletRequest httpServletRequest) {
+		return recommendationRepository.findByTenantId(tenantContext.requireTenantId(httpServletRequest));
 	}
 
 	private String classify(String text) {

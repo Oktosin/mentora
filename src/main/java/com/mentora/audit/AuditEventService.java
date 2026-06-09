@@ -14,7 +14,7 @@ public class AuditEventService {
 
 	private final ActivityLogRepository activityLogRepository;
 
-	public void log(UUID tenantId, UUID userId, String action, HttpServletRequest request) {
+	public void log(UUID tenantId, UUID userId, String action, HttpServletRequest httpServletRequest) {
 		if (tenantId == null) {
 			return;
 		}
@@ -23,8 +23,8 @@ public class AuditEventService {
 		log.setUserId(userId);
 		log.setAction(action);
 		log.setTimestamp(Instant.now());
-		log.setIpAddress(request.getRemoteAddr());
-		log.setDevice(request.getHeader("User-Agent"));
+		log.setIpAddress(httpServletRequest.getRemoteAddr());
+		log.setDevice(httpServletRequest.getHeader("User-Agent"));
 		activityLogRepository.save(log);
 	}
 }

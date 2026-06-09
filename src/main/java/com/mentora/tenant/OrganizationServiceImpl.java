@@ -20,17 +20,17 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private final AuditEventService auditEventService;
 
 	@Override
-	public Organization createOrganization(Organization organization, HttpServletRequest request) {
-		UUID tenantId = tenantContext.resolveTenantId(request, organization.getTenantId());
+	public Organization createOrganization(Organization organization, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.resolveTenantId(httpServletRequest, organization.getTenantId());
 		organization.setTenantId(tenantId);
 		organization.setActive(true);
 		Organization created = organizationRepository.save(organization);
-		auditEventService.log(tenantId, null, "ORG_CREATED", request);
+		auditEventService.log(tenantId, null, "ORG_CREATED", httpServletRequest);
 		return created;
 	}
 
 	@Override
-	public List<Organization> organizations(HttpServletRequest request) {
-		return organizationRepository.findByTenantId(tenantContext.requireTenantId(request));
+	public List<Organization> organizations(HttpServletRequest httpServletRequest) {
+		return organizationRepository.findByTenantId(tenantContext.requireTenantId(httpServletRequest));
 	}
 }

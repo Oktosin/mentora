@@ -23,8 +23,8 @@ public class ContentAccessServiceImpl implements ContentAccessService {
 	private final AuditEventService auditEventService;
 
 	@Override
-	public Map<String, Object> contentAccess(String assetKey, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public Map<String, Object> contentAccess(String assetKey, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Map<String, Object> response = new LinkedHashMap<>();
 		response.put("tenantId", tenantId);
 		response.put("assetKey", assetKey);
@@ -32,7 +32,7 @@ public class ContentAccessServiceImpl implements ContentAccessService {
 		response.put("contentToken", tokenService.createContentToken(tenantId, assetKey, 300));
 		response.put("expiresAt", Instant.now().plusSeconds(300));
 		response.put("policy", "Token-based, tenant-scoped content access. Use contentToken to sign CDN/storage URLs.");
-		auditEventService.log(tenantId, null, "CONTENT_ACCESS_TOKEN_CREATED", request);
+		auditEventService.log(tenantId, null, "CONTENT_ACCESS_TOKEN_CREATED", httpServletRequest);
 		return response;
 	}
 }

@@ -30,8 +30,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 	private final TenantContext tenantContext;
 
 	@Override
-	public Map<String, Object> analytics(HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public Map<String, Object> analytics(HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Map<String, Object> analytics = new LinkedHashMap<>();
 		analytics.put("users", userDataDAO.findByTenantId(tenantId).size());
 		analytics.put("anonymousFeedback", anonymousPostRepository.countByTenantId(tenantId));

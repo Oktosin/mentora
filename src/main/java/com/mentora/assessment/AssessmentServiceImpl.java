@@ -29,20 +29,20 @@ public class AssessmentServiceImpl implements AssessmentService {
 	private final TenantContext tenantContext;
 
 	@Override
-	public Assessment create(Assessment assessment, HttpServletRequest request) {
-		assessment.setTenantId(tenantContext.requireTenantId(request));
+	public Assessment create(Assessment assessment, HttpServletRequest httpServletRequest) {
+		assessment.setTenantId(tenantContext.requireTenantId(httpServletRequest));
 		assessment.setActive(true);
 		return assessmentRepository.save(assessment);
 	}
 
 	@Override
-	public List<Assessment> list(HttpServletRequest request) {
-		return assessmentRepository.findByTenantId(tenantContext.requireTenantId(request));
+	public List<Assessment> list(HttpServletRequest httpServletRequest) {
+		return assessmentRepository.findByTenantId(tenantContext.requireTenantId(httpServletRequest));
 	}
 
 	@Override
-	public List<Question> questions(UUID assessmentId, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public List<Question> questions(UUID assessmentId, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Assessment assessment = tenantAssessment(tenantId, assessmentId);
 		List<Question> questions = questionRepository.findByTenantIdAndAssessmentId(tenantId, assessmentId);
 		if (assessment.isRandomized()) {
@@ -52,8 +52,8 @@ public class AssessmentServiceImpl implements AssessmentService {
 	}
 
 	@Override
-	public Question addQuestion(UUID assessmentId, Question question, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public Question addQuestion(UUID assessmentId, Question question, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Assessment assessment = tenantAssessment(tenantId, assessmentId);
 		question.setTenantId(tenantId);
 		question.setAssessment(assessment);
@@ -61,8 +61,8 @@ public class AssessmentServiceImpl implements AssessmentService {
 	}
 
 	@Override
-	public AnswerOption addAnswer(UUID questionId, AnswerOption answer, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public AnswerOption addAnswer(UUID questionId, AnswerOption answer, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Question question = tenantQuestion(tenantId, questionId);
 		answer.setTenantId(tenantId);
 		answer.setQuestion(question);
@@ -71,8 +71,8 @@ public class AssessmentServiceImpl implements AssessmentService {
 
 	@Override
 	@Transactional
-	public AssessmentResult submit(UUID assessmentId, UUID userId, SubmissionRequest requestPayload, HttpServletRequest request) {
-		UUID tenantId = tenantContext.requireTenantId(request);
+	public AssessmentResult submit(UUID assessmentId, UUID userId, SubmissionRequest requestPayload, HttpServletRequest httpServletRequest) {
+		UUID tenantId = tenantContext.requireTenantId(httpServletRequest);
 		Assessment assessment = tenantAssessment(tenantId, assessmentId);
 		UserData user = userDataDAO.findById(userId)
 				.filter(item -> item.getTenantId().equals(tenantId))
