@@ -272,7 +272,7 @@ Each module owns its business logic, domain entities, services, and APIs while r
 
 Author
 
-Tosin John Okuwobi
+Tosin Okuwobi
 
 Backend Engineer | Java & Spring Boot Developer
 
