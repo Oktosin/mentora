@@ -4,6 +4,16 @@
 
 Mentora is currently under active development and continuously evolving.
 
+---
+
+Overview
+
+Mentora is a multi-tenant Learning Management System (LMS) built with Spring Boot and PostgreSQL. The platform enables organizations to create, manage, and deliver learning experiences while providing assessment capabilities, learner analytics, activity auditing, and intelligent recommendation features.
+
+The application follows a Modular Monolith architecture, allowing clear separation of business domains while maintaining the simplicity of a single deployable application.
+
+---
+
 ### Current Focus Areas
 
 * User Authentication & Authorization
@@ -30,89 +40,153 @@ Mentora is currently under active development and continuously evolving.
 
 ---
 
-## Sample API Endpoints
+## API Endpoints
+
+**Base URL**
+
+```http
+/api
+```
+
+---
 
 ### Authentication
 
 ```http
-POST /api/v1/auth/register
-POST /api/v1/auth/login
-POST /api/v1/auth/refresh-token
+POST|GET /api/auth/login
+POST|GET /api/auth/logout
+POST|GET /api/auth/refresh-token
+
+POST|GET /api/auth/mfa/request-otp
+POST|GET /api/auth/mfa/verify
 ```
+
+---
 
 ### Users
 
 ```http
-GET /api/v1/users
-GET /api/v1/users/{id}
-PUT /api/v1/users/{id}
+POST|GET /api/user/register
+
+POST|GET /api/user/find-users
 ```
+
+---
 
 ### Organizations
 
 ```http
-POST /api/v1/organizations
-GET /api/v1/organizations/{id}
+POST|GET /api/orgs/create
+
+POST|GET /api/orgs/find-all
 ```
 
-### Courses
+---
+
+### Learning Management
+
+#### Courses
 
 ```http
-POST /api/v1/courses
-GET /api/v1/courses
-GET /api/v1/courses/{id}
-PUT /api/v1/courses/{id}
-DELETE /api/v1/courses/{id}
+POST|GET /api/learning/courses
+
+POST|GET /api/learning/find-courses
 ```
 
-### Modules
+#### Modules
 
 ```http
-POST /api/v1/modules
-GET /api/v1/modules/{id}
+POST|GET /api/learning/courses/{courseId}/modules
+
+POST|GET /api/learning/courses/{courseId}/find-modules
 ```
 
-### Lessons
+#### Lessons
 
 ```http
-POST /api/v1/lessons
-GET /api/v1/lessons/{id}
+POST|GET /api/learning/modules/{moduleId}/lessons
+
+POST|GET /api/learning/modules/{moduleId}/find-lessons
 ```
 
-### Enrollments
+#### Enrollments
 
 ```http
-POST /api/v1/enrollments
-GET /api/v1/enrollments
+POST|GET /api/learning/courses/{courseId}/enroll/{userId}
 ```
 
-### Assessments
+#### Progress Tracking
 
 ```http
-POST /api/v1/assessments
-GET /api/v1/assessments/{id}
+POST|GET /api/learning/lessons/{lessonId}/progress/{userId}
 ```
 
-### Submissions
+---
+
+#### Assessments
 
 ```http
-POST /api/v1/submissions
-GET /api/v1/submissions/{id}
+POST|GET /api/assessments/create
+
+POST|GET /api/assessments/find-all
 ```
 
-### Recommendations
+#### Questions
 
 ```http
-GET /api/v1/recommendations
+POST|GET /api/assessments/{assessmentId}/questions
+
+POST|GET /api/assessments/{assessmentId}/find-questions
 ```
 
-### Anonymous Discussions
+#### Answers
 
 ```http
-POST /api/v1/posts
-GET /api/v1/posts
-GET /api/v1/posts/{id}
+POST|GET /api/assessments/questions/{questionId}/answers
 ```
+
+#### Submissions
+
+```http
+POST|GET /api/assessments/{assessmentId}/submissions/{userId}
+```
+
+---
+
+### Recommendations & Community Feedback
+
+```http
+POST|GET /api/feedback
+
+POST|GET /api/find-feedback
+
+POST|GET /api/recommendations
+```
+
+---
+
+### Analytics
+
+```http
+POST|GET /api/analytics/view
+```
+
+---
+
+### Audit Logs
+
+```http
+POST|GET /api/audit/activity
+```
+
+---
+
+### Content Access
+
+```http
+POST|GET /api/content/{assetKey}/access
+```
+
 
 ---
 
@@ -202,4 +276,4 @@ Tosin John Okuwobi
 
 Backend Engineer | Java & Spring Boot Developer
 
-Focused on building scalable backend systems, fintech platforms, and learning technology solutions.
+Focused on building scalable backend systems, fintech platforms, and enterprise software solutions.
